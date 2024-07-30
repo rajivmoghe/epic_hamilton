@@ -1,4 +1,5 @@
 export default () => ({
+  secureLog: false, // dont need token to log. Set to true for tokens needed.
   servicePort: parseInt(process.env.SERVICE_PORT, 10) || 8000,
   logDirectory: process.env.LOG_DIRECTORY || './logs',
   logFileName: process.env.LOG_FILE_NAME || 'loggerapp',

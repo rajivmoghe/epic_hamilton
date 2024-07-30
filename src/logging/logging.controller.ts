@@ -9,6 +9,7 @@ export class LoggingController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async log(@Body() data: any): Promise<void> {
+    console.log(`... ${Math.floor(Date.now() / 1000)}`);
     await this.loggingService.log(data);
   }
 }
