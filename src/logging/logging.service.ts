@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ProducerService } from '../kafka/kafka.producer.service';
 
 @Injectable()
 export class LoggingService {
@@ -14,7 +15,10 @@ export class LoggingService {
   private currentFileDate: Date;
   private suffix: number;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly producerService: ProducerService,
+  ) {
     this.logDir = this.configService.get<string>('logDirectory');
     this.logFileName = this.configService.get<string>('logFileName');
     this.maxFileSize = this.configService.get<number>('maxFileSize');
@@ -60,5 +64,10 @@ export class LoggingService {
     fs.appendFileSync(this.currentFile, logEntry);
     this.currentSize += Buffer.byteLength(logEntry);
     this.checkRotation();
+  }
+
+  async logToKafka(newrecord): Promise<void> {
+    console.log(`received msg for Kafka\n${JSON.stringify(newrecord)}`);
+    await this.producerService.produce(newrecord);
   }
 }
